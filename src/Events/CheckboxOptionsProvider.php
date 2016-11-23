@@ -18,7 +18,7 @@
  * @filesource
  */
 
-namespace MetaModels\DcGeneral\Events\MetaModel;
+namespace MetaModels\Contao\FrontendEditing\Events;
 
 use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Event\GetPropertyOptionsEvent;
 use MetaModels\Attribute\Checkbox\Checkbox;

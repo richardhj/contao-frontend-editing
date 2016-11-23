@@ -20,21 +20,25 @@
 
 use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Event\GetPropertyOptionsEvent;
 use MetaModels\Contao\FrontendEditing\EventListener\RenderItemListListener;
+use MetaModels\Events\MetaModelsBootEvent;
 use MetaModels\MetaModelsEvents;
 
 $handler = new RenderItemListListener();
 
 return [
-    MetaModelsEvents::PARSE_ITEM => [
+    MetaModelsEvents::PARSE_ITEM              => [
         [$handler, 'handleForItemRendering']
     ],
-    MetaModelsEvents::RENDER_ITEM_LIST => [
+    MetaModelsEvents::RENDER_ITEM_LIST        => [
         [$handler, 'handleFrontendEditingInListRendering']
     ],
-	GetPropertyOptionsEvent::NAME             => [
-        [
-            'MetaModels\DcGeneral\Events\MetaModel\CheckboxOptionsProvider::getPropertyOptions',
-            200
-        ]
+    MetaModelsEvents::SUBSYSTEM_BOOT_FRONTEND => [
+        function (MetaModelsBootEvent $event) {
+            $dispatcher = $event->getServiceContainer()->getEventDispatcher();
+            $dispatcher->addListener(
+                GetPropertyOptionsEvent::NAME,
+                'MetaModels\Contao\FrontendEditing\Events\CheckboxOptionsProvider::getPropertyOptions',
+                200);
+        }
     ]
 ];
