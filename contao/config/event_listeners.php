@@ -18,6 +18,7 @@
  * @filesource
  */
 
+use ContaoCommunityAlliance\DcGeneral\Contao\View\Contao2BackendView\Event\GetPropertyOptionsEvent;
 use MetaModels\Contao\FrontendEditing\EventListener\RenderItemListListener;
 use MetaModels\MetaModelsEvents;
 
@@ -30,4 +31,10 @@ return [
     MetaModelsEvents::RENDER_ITEM_LIST => [
         [$handler, 'handleFrontendEditingInListRendering']
     ],
+	GetPropertyOptionsEvent::NAME             => [
+        [
+            'MetaModels\DcGeneral\Events\MetaModel\CheckboxOptionsProvider::getPropertyOptions',
+            200
+        ]
+    ]
 ];
