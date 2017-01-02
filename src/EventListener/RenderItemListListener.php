@@ -24,6 +24,8 @@ use ContaoCommunityAlliance\Contao\Bindings\ContaoEvents;
 use ContaoCommunityAlliance\Contao\Bindings\Events\Controller\GenerateFrontendUrlEvent;
 use ContaoCommunityAlliance\Contao\Bindings\Events\Controller\GetPageDetailsEvent;
 use ContaoCommunityAlliance\DcGeneral\Data\ModelId;
+use ContaoCommunityAlliance\DcGeneral\Factory\DcGeneralFactory;
+use ContaoCommunityAlliance\Translator\TranslatorInterface;
 use ContaoCommunityAlliance\UrlBuilder\UrlBuilder;
 use MetaModels\Events\ParseItemEvent;
 use MetaModels\Events\RenderItemListEvent;
@@ -103,13 +105,47 @@ class RenderItemListListener
         if ($enabled) {
             $url = $this->generateAddUrl($dispatcher, $page);
 
-            $event->getTemplate()->addUrl    = $url;
-            $event->getTemplate()->editLabel = $GLOBALS['TL_LANG']['MSC']['metamodel_edit_item'];
+            $dcGeneralFactory = new DcGeneralFactory();
+            $dcGeneral = $dcGeneralFactory
+                ->setContainerName($event->getList()->getMetaModel()->getTableName())
+                ->setEventDispatcher($dispatcher)
+                ->setTranslator($this->getTranslator())
+                ->createDcGeneral();
+            $basicDefinition = $dcGeneral->getEnvironment()->getDataDefinition()->getBasicDefinition();
+
+            $caller->Template->createEnable  = $basicDefinition->isCreatable();
             $caller->Template->addUrl        = $url;
             $caller->Template->addNewLabel   = $GLOBALS['TL_LANG']['MSC']['metamodel_add_item'];
+            $event->getTemplate()->addUrl    = $url;
+            $event->getTemplate()->editLabel = $GLOBALS['TL_LANG']['MSC']['metamodel_edit_item'];
 
             $event->getList()->getView()->set(self::FRONTEND_EDITING_PAGE, $page);
         }
+    }
+
+    /**
+     * Get the translator from the service container.
+     *
+     * @return TranslatorInterface
+     *
+     * @throws \RuntimeException When the DIC or translator have not been correctly initialized.
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     * @SuppressWarnings(PHPMD.CamelCaseVariableName)
+     */
+    private function getTranslator()
+    {
+        if (!($container = $GLOBALS['container']) instanceof \Pimple) {
+            throw new \RuntimeException('The dependency container has not been initialized correctly.');
+        }
+
+        $translator = $container['translator'];
+
+        if (!$translator instanceof TranslatorInterface) {
+            throw new \RuntimeException('The dependency container has not been initialized correctly.');
+        }
+
+        return $translator;
     }
 
     /**
