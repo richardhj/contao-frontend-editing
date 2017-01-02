@@ -13,6 +13,7 @@
  * @package    MetaModels
  * @subpackage ContaoFrontendEditing
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
+ * @author     Richard Henkenjohann <richardhenkenjohann@googlemail.com>
  * @copyright  2016 The MetaModels team.
  * @license    https://github.com/MetaModels/contao-frontend-editing/blob/master/LICENSE LGPL-3.0
  * @filesource
